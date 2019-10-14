@@ -1,0 +1,936 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>API 🛠 for 😄 &amp; 🤖</title>
+  <style type="text/css">
+    @font-face {
+  font-family: 'Segoe UI Emoji';
+  src: local('Segoe UI Emoji'), url(theme/font/seguiemj.ttf) format('ttf'), url(theme/font/seguiemj.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Noto Sans';
+  src: local('Noto Sans'), local('NotoSans'), url(theme/font/notosans.woff2) format('woff2');
+}
+
+/* Theme Styles */
+body {
+  font-family: 'Segoe UI Emoji', 'Noto Sans', sans-serif;
+  font-weight: 300;
+  font-size: 150%;
+  color: #1C0F5D;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.center {
+  text-align: center;
+}
+
+/* The following is needed for the ESC overview slide selection */
+.slides {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.slides.active .slide:not(.hidden) {
+  border: 22px solid red;
+}
+
+.slide-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  cursor: pointer;
+  display: none;
+}
+
+.slides.active .slide:hover .slide-overlay::before {
+  content: '▶';
+  text-align: center;
+  line-height: 300px;
+  font-size: 200px;
+  color: #1C0F5D;
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.slides.active .slide:hover .slide-overlay{
+  visibility: visible;
+  background: rgba(0,0,0,0.5);
+}
+.slide-wrapper {
+  margin: 7px;
+  transition: all 250ms;
+}
+
+/* Presentation Styles */
+.slide {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 3rem 4.5rem 6rem;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.slide-content {
+  z-index: 2;
+  opacity: 1;
+  font-size: 200%;
+  font-weight: 200;
+  line-height: 1.375;
+  height: 100%;
+  overflow: hidden;
+}
+
+.controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 3;
+}
+
+.controls .overview {
+  display: inline-block;
+  float: left;
+  color: #C7C7C7;
+  margin-right: 15px;
+  font-weight: bold;
+  font-size: 30px;
+  line-height: 30px;
+  cursor: pointer;
+}
+.controls .overview:hover {
+  color: #8a8cde;
+}
+.controls .arrow {
+  float: left;
+  height: 0;
+  width: 0;
+  margin-right: 15px;
+  border: 15px solid #C7C7C7;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.controls .prev {
+  border-top-color: transparent;
+  border-right-width: 25px;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  border-left-width: 0;
+}
+
+.controls .next {
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-right-width: 0;
+  border-bottom-color: transparent;
+  border-left-width: 25px;
+}
+
+.controls .prev:hover {
+  border-right-color: #8a8cde;
+  cursor: pointer;
+}
+
+.controls .next:hover {
+  border-left-color: #8a8cde;
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3 {
+  margin: 1rem 0;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 300%;
+  text-align: center;
+  margin-top: 2em;
+}
+
+h2 {
+  font-size: 200%;
+  font-weight: 200;
+  text-align: center;
+  margin: .5em;
+}
+
+h3 {
+  font-size: 140%;
+  padding-bottom: 1rem;
+  border-bottom: 1px ridge #8a8cde;
+}
+
+ul {
+  padding-left: 6rem;
+}
+
+blockquote {
+  padding-left: 20px;
+  margin-left: 0;
+  border-left: 5px solid #8a8cde;
+  border-radius: 0 3px 3px 0;
+}
+
+blockquote p {
+  padding: .5em;
+}
+
+p.fragment,
+li {
+  width: 80rem;
+  margin: 1.5em auto;
+}
+ol li{
+  margin: .75em auto;
+}
+ul {
+  list-style: none; /* Remove default bullets */
+}
+ul li::before {
+  content: "\2022";  /* Add content: \2022 is the CSS Code/unicode for a bullet */
+  color: #8a8cde; /* Change the color */
+  font-weight: bold; /* If you want it to be bold */
+  display: inline-block; /* Needed to add space between the bullet and the text */ 
+  width: 1em; /* Also needed for space (tweak if needed) */
+  margin-left: -1em; /* Also needed for space (tweak if needed) */
+}
+
+span[data-icon] {
+  margin-left: 3rem;
+}
+
+[data-icon]::before {
+  display: inline-block;
+  content: attr(data-icon);
+  color: #8a8cde;
+  font-size: 1.5em;
+  vertical-align: sub;
+  margin-right: .5em;
+}
+[data-icon="✓"]::before {
+  color: green;
+}
+[data-icon="❌"]::before {
+  color: red;
+}
+:not(.hidden) [data-icon]:not(.hidden)::before {
+  animation-name: stamp;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+small {
+  font-size: 60%;
+}
+small.fragment {
+  color: #8a8cde;
+}
+.slide.screen img {
+  max-width: 80vw;
+  transform-origin: 50% 0;
+  margin: 0 auto;
+  display: block;
+}
+.slide.screen.full img {
+  height: 80vh;
+}
+.slide.screen.large img {
+  height: 60vh;
+}
+
+.left {
+  float: left;
+  width: 48%;
+}
+
+.right {
+  float: right;
+  width: 48%;
+}
+
+.float-right {
+  float: right;
+}
+
+.author h1 {
+  margin: 2em 0 1em;
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+}
+
+.author h3 {
+  font-weight: 100;
+  text-align: center;
+  border: none;
+}
+
+a {
+  word-break: break-all;
+  text-decoration: none;
+  color: #8a8cde;
+}
+
+hr {
+  border: 1px solid #8a8cde;
+}
+
+
+table td,
+table th {
+  padding-right: 3em;
+  text-align: left;
+}
+
+.progress {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 3px;
+  z-index: 2;
+}
+
+.progress-bar {
+  height: 3px;
+  width: 0;
+  background-color: red;
+  -webkit-transition: width .15s ease-out;
+     -moz-transition: width .15s ease-out;
+       -o-transition: width .15s ease-out;
+          transition: width .15s ease-out;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+/* Responsiveness */
+@media (max-width: 850px) {
+  body {
+    font-size: 70%;
+  }
+
+  .slide {
+    padding: 50px;
+  }
+  p:last-of-type a {
+    bottom: 60px;
+  }
+
+  .slide-content {
+    width: auto;
+  }
+
+  img {
+    margin: 0 auto;
+    display: block;
+  }
+
+  .prev,
+  .prev:hover {
+    border-right-color: rgba(135, 135, 135, .5);
+  }
+
+  .next,
+  .next:hover {
+    border-left-color: rgba(135, 135, 135, .5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    overflow: hidden;
+    font-size: 50%;
+  }
+
+  .slide {
+    padding: 10px;
+  }
+  p:last-of-type a {
+    bottom: 15px;
+  }
+  .slide-content {
+    height: 340px;
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  ul {
+    padding-left: 25px;
+  }
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    -webkit-transition: none !important;
+    transition: none !important;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  .hidden {
+    visibility: visible;
+  }
+
+  html {
+    overflow: visible;
+  }
+
+  body {
+    margin: 0 !important;
+    overflow: visible;
+    border: 0;
+  }
+
+  .progress,
+  .controls {
+    display: none;
+  }
+  .slides {
+    display: block;
+  }
+  .slide-wrapper {
+    width: 100%;
+    height: 21cm;
+    margin: 0;
+    page-break-before: always;
+    page-break-inside: avoid;
+    page-break-after: always;
+  }
+
+  .slide {
+    position: relative;
+    height: 100%;
+  }
+
+  ._slide-content {
+    margin-top: 0;
+    margin-bottom: 40px;
+    overflow: visible;
+  }
+
+}
+
+.slide {
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-image: url(theme/img/footer.png);
+  box-sizing: border-box;
+}
+
+.author-slide .slide-content {
+  background-position: center 30rem;
+  background-repeat: no-repeat;
+  background-size: 40%;
+  background-origin: border-box;
+  background-image: url(theme/img/oodrive.png);
+}
+
+.author-slide .url a,
+.author-slide .email a {
+  color: #0171af;
+}
+
+@keyframes stamp {
+  0%{
+    opacity: 0;
+  }
+  10%{
+    opacity:.3;
+    transform-origin: 50% 50%;
+    transform: rotate(-2deg) scale(4);
+    transition: all .3s cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  }
+  100%{
+    opacity:1;
+    transform: rotate(-15deg) scale(1);
+  }
+}
+
+  </style>
+</head>
+<body>
+    <div class="progress">
+    <div class="progress-bar"></div>
+  </div>
+
+<div class="slides">
+    <div class="slide-wrapper">
+      <div class="slide" id="slide-1">
+        <div data-id="1" class="slide-overlay"></div>
+        <section class="slide-content"><h1 id="api-for-">API 🛠 for 😄 &amp; 🤖</h1>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen full" id="slide-2">
+        <div data-id="2" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="tools-thanks-but-no-thanks-">Tools?! 🤚 Thanks, but no thanks...</h3>
+<p><a href="https://openapi.tools" title="OpenAPI tools is a messy place"><img src="img/tools.jpg" alt="Toooools"></a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-3">
+        <div data-id="3" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="why-">Why? 🧠</h2>
+<ul>
+<li>Keep the <a href="https://www.youtube.com/watch?v=CyXzy6T58l8">API design process simple</a> &amp; <a href="https://apisyouwonthate.com/">enjoyable</a></li>
+<li>Get <a href="https://openapi-map.apihandyman.io/">all the possible value</a> from <a href="https://swagger.io/specification/">OpenAPI specs</a> <small>(<acronym title="OpenAPI Specification">OAS</acronyme>)</small></li>
+<li>Ensure <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">rest</a> API <a href="https://github.com/openapi-community/style-guide">common practice</a> and <a href="https://blog.florimond.dev/restful-api-design-13-best-practices-to-make-your-users-happy">quality</a></li>
+</ul>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen" id="slide-4">
+        <div data-id="4" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="you-need-api-specification-anyway-">You need API specification anyway! 🤦‍♂️</h3>
+<p><a href="https://twitter.com/philsturgeon/status/1182275821496672256"><img src="img/doc_later_workflow.jpg" alt="Documentation later workflow"></a></p>
+<p class="fragment"><img src="img/been_there_done_that.jpg" valign="middle" style="display:inline-block" alt="Been there Done that"/> we all did...</p></section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen" id="slide-5">
+        <div data-id="5" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="api-doc-generated-from-code-don-t-need-spec-">API doc generated from code, don&#39;t need spec! 👊</h3>
+<p><a href="https://swagger.io/resources/webinars/automate-code-first-approach-swagger/" title="You&#39;ll find tools to do that, but..."><img src="img/code_first_workflow.jpg" alt="Code first workflow"></a></p>
+<center>
+<span class="fragment" style="display:inline-block;vertical-align:top;width:30%"><small>Backend only write API doc 😅</small><br><img src="img/write_code.gif" valign="middle" alt="API doc in code"/></span>
+<span class="fragment" style="display:inline-block;vertical-align:top;width:30%"><small>API doc in code is awkward 🚨</small><br><img src="img/api_doc_in_code.jpg" valign="middle" alt="API doc in code"/></span>
+<span class="fragment" style="display:inline-block;vertical-align:top;width:30%"><small>Too much API code refactor 🤯</small><br><img src="img/unexpected_effect.gif" valign="middle" alt="API doc in code"/></span>
+</center></section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen" id="slide-6">
+        <div data-id="6" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="api-design-first-">API design first 🚀</h3>
+<p><a href="https://apisyouwonthate.com/blog/api-design-first-vs-code-first"><img src="img/api_design_workflow.jpg" alt="Design first workflow"></a></p>
+<ol>
+<li>You&#39;ll need a <a href="https://stoplight.io/studio/">good editor</a></li>
+<li>Be sure to <a href="https://apihandyman.io/writing-openapi-swagger-specification-tutorial-part-1-introduction/">write good spec</a></li>
+<li>Deliver <a href="https://stoplight.io/open-source/prism/">Mocks</a> &amp; <a href="https://redocly.github.io/redoc/">Docs</a></li>
+</ol>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-7">
+        <div data-id="7" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="openapi-editors-">OpenAPI editors ✍️</h2>
+<ul>
+<li><img src="img/browser.png" valign="bottom" alt="Online editor"/> <a href="https://editor.swagger.io/">Swagger editor</a> <small>quick &amp; dirty online editor</small></li>
+<li><img src="img/vscode.png" valign="bottom" alt="VSCode"/> <a href="https://marketplace.visualstudio.com/items?itemName=42Crunch.vscode-openapi">Openapi extension</a> <small>or</small><br>
+<img src="img/intellij.png" valign="bottom" alt="IntelliJ"/> <a href="https://plugins.jetbrains.com/plugin/8347-swagger">Swagger plugin</a> <small>or</small><br>
+<img src="img/eclipse.png" valign="bottom" alt="Eclipse"/> <a href="https://github.com/RepreZen/KaiZen-OpenAPI-Editor">KaiZen editor</a>
+<small>IDE integration</small></li>
+<li><img src="img/stoplight.png" valign="bottom" alt="Stoplight studio"/> <strong><a href="https://stoplight.io/studio/">Stoplight studio</a></strong> <small>advanced specification suite</small></li>
+</ul>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen large" id="slide-8">
+        <div data-id="8" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="stoplight-studio-">Stoplight studio 🎅</h3>
+<p><a href="https://stoplight.io/studio/" title="All in one OpenAPI editor"><img src="img/stoplight_studio.png" alt="Stoplight studio"></a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-9">
+        <div data-id="9" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="start-or-migrate-to-openapi-">Start or migrate to OpenAPI 🏁</h3>
+<p>You can <a href="http://oodrive-api.oogit.oodrive.net/docs/howto/create-first-oas">start from scrath</a> or <a href="https://www.youtube.com/watch?v=6kwmW_p_Tig">migrate to openAPI Specification</a>!</p>
+<p><span class="fragment check" data-icon="⏩">
+<span class="fragment" style="float:right"><a href="https://www.apimatic.io/transformer/" title="Transformer works great but automatic transform eventually require manual tuning"><img src="img/transformer.gif" alt="Transformer can translate lots of API specifications into OpenAPI"></a></span>
+<a href="https://www.apimatic.io/transformer/#supported-formats">Swagger, RAML, Blueprint &amp; Postman to OpenAPI</a>
+</span><br></p>
+<p><br></p>
+<p><span class="fragment check" data-icon="👍">
+<span class="fragment" style="float:right"><a href="https://swagger-toolbox.firebaseapp.com/" title="JSON or OpenAPI schema are verbose"><img src="img/json_oas_schema.jpg" alt="JSON sample to OpenAPI schema"></a></span>
+<a href="https://swagger-toolbox.firebaseapp.com/">JSON sample to OpenAPI</a>
+</span></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-10">
+        <div data-id="10" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="well-written-specification-">Well written specification 👌</h2>
+<p><span class="fragment check" data-icon="📢"><a href="https://rocket.oodrive.net/channel/api-rest">Ask</a> and <a href="https://apis.guru/browse-apis/">learn</a> from the best <img width=64 src="https://rocket.oodrive.net/avatar/bogdan.ungureanu" valign="middle" alt="Bogdan"/> <img width=64 src="https://rocket.oodrive.net/avatar/paul.prihor" valign="middle" alt="Paul"/> <img width=64 src="https://rocket.oodrive.net/avatar/samantha.alwis.karunaratne" valign="middle" alt="Samantha"/> <img width=64 src="https://rocket.oodrive.net/avatar/jerome.bellier" valign="middle" alt="Jerome"/> <img width=64 src="https://rocket.oodrive.net/avatar/julien.bour" valign="middle" alt="Julien"/> <small>...</small></span><br></p>
+<p><span class="fragment check" data-icon="📏">Lint <del><a href="https://speccy.io/"><code>speccy</code></a></del> <a href="https://github.com/stoplightio/spectral"><code>spectral lint openapi.yml</code></a> <small>in <img src="img/stoplight.png" valign="middle" alt="Stoplight studio"/> &amp; <img src="img/gitlab.png" valign="middle" alt="Gitlab CI"/></small></span><br></p>
+<p><span class="fragment check" data-icon="☑">Enforce <a href="https://github.com/openapi-community/style-guide">common</a> rules and <a href="http://standards.rest/">standard</a> practice</span><br></p>
+<p><span class="fragment check" data-icon="👶">Detect changes <a href="https://github.com/quen2404/openapi-diff"><code>openapi-diff</code></a> <small>&amp; make changelog</small></span><br></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen" id="slide-11">
+        <div data-id="11" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="tools-already-in-ci-">Tools already in CI 👷</h3>
+<p><em>Merge requests pipeline</em> <img src="img/pipeline_mr.png" alt="merge requests pipeline"></p>
+<p><em>Tag pipeline</em> <img src="img/pipeline_tag.png" alt="tag pipeline"></p>
+<p><div class="fragment"></p>
+<pre><code class="lang-yaml"><span class="hljs-attr">include:</span> <span class="hljs-string">oogit.oodrive.net/ci-templates/api-doc/open-api-run.yml</span>
+</code></pre>
+<div></section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-12">
+        <div data-id="12" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="documentation-">Documentation 📑</h2>
+<ul>
+<li><a href="https://petstore.swagger.io/">Swagger UI</a> <small>quick &amp; easy documentation</small></li>
+<li><a href="https://mrin9.github.io/OpenAPI-Viewer">OpenAPI viewer</a> <small>clean &amp; simple try out</small></li>
+<li><strong><a href="https://stoplight.io/studio/">Redoc</a></strong> <small>clear <a href="https://github.com/Redocly/redoc/blob/master/docs/redoc-vendor-extensions.md">advanced</a> documentation <strong><a href="http://oodrive-api.oogit.oodrive.net/docs/howto/use-oas-postman">+ Postman</a></strong></small></li>
+</ul>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen large" id="slide-13">
+        <div data-id="13" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="redoc-api-docs-you-can-be-proud-of-">Redoc: API docs you can be proud of 🤩</h3>
+<p><a href="https://github.com/Redocly/redoc/" title="Redoc repo"><img src="img/redoc.png" alt="Redoc"></a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-14">
+        <div data-id="14" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="redoc-pro-tips-">Redoc, pro tips 🤑</h3>
+<ul>
+<li>Displays <a href="https://swagger.io/docs/specification/data-models/data-types/">data types &amp; formats</a></li>
+<li>Supports <a href="https://swagger.io/docs/specification/adding-examples/">named examples</a></li>
+<li>Practical <a href="https://github.com/Redocly/redoc/blob/master/docs/redoc-vendor-extensions.md">x-extension</a> &amp; <a href="https://github.com/Rebilly/RebillyAPI/blob/master/spec/plugins/x-sortableEnum.js">plugins</a><small>: tags, side-menu, code samples ...</small></li>
+<li><em>Futur version <sup><small>©️</small></sup></em> may add <a href="https://github.com/Redocly/redoc/issues/53">try out</a><small>, already a <a href="https://rebilly.github.io/RebillyAPI">pro feature</a></small></li>
+</ul>
+<p><small class="fragment">Nah, really... just use Postman ;)</small></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen fullscreen" id="slide-15">
+        <div data-id="15" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="postman-plug-play-">Postman, plug &amp; play 📨</h3>
+<p><img src="img/postman.png" alt="Postman"></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-16">
+        <div data-id="16" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="mock-">Mock 🌠</h2>
+<p><a href="https://stoplight.io/p/docs/gh/stoplightio/prism/docs/guides/workflow.md">Fake auto-generated API</a> allows you to</p>
+<ul>
+<li>Play with API from a simple spec file, even at the <acronym title="Merge Request">MR</acronym> stage</li>
+<li>Start to implement client services &amp; views upfront</li>
+<li>Collect feedbacks from customers / external partners</li>
+</ul>
+<p><span class="fragment check" data-icon="🖧">HTTP Mock server <del><a href="https://github.com/danielgtaylor/apisprout"><code>apisprout</code></a></del> <a href="https://stoplight.io/p/docs/gh/stoplightio/prism/README.md"><code>prism mock openapi.yml</code></a> <small><img src="img/stoplight.png" valign="middle" style="display:inline" alt="Stoplight studio"/> again</small></span></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen" id="slide-17">
+        <div data-id="17" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="prism-">Prism 🛆</h3>
+<p><a href="https://www.youtube.com/watch?v=nZM26knV_ec"><img src="img/prism-cli.svg" alt="Prism"></a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-18">
+        <div data-id="18" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="prism-superpowers-">Prism superpowers 🔋</h3>
+<ul>
+<li><a href="https://stoplight.io/p/docs/gh/stoplightio/prism/docs/guides/request-validation.md">Validate request payload &amp; params</a><small>, send 400 otherwise</small></li>
+<li><a href="https://stoplight.io/p/docs/gh/stoplightio/prism/docs/guides/request-validation.md#server-validation">Validate servers</a> <small>(request passthrough)</small></li>
+<li><a href="https://github.com/stoplightio/prism/blob/master/docs/guides/cli.md#determine-response-status">Magic query params</a><br>
+ <code>?__example=myStuff&amp;__code=404&amp;__server=prod</code></li>
+<li>Generate <a href="https://stoplight.io/p/docs/gh/stoplightio/prism/docs/guides/mock-responses.md#dynamic-response-generation">realistic fake data using <code>x-faker</code></a> <small>(<a href="https://swagger.io/docs/specification/openapi-extensions/">vendor extention</a>)</small></li>
+</ul>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden  screen" id="slide-19">
+        <div data-id="19" class="slide-overlay"></div>
+        <section class="slide-content"><h3 id="poc-with-portu-a-certeurope-api-">POC with Portu, a CertEurope API 🔑</h3>
+<p><a href="https://portu.now.sh/_src"><img src="img/now.png" alt="Prism"></a></p>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden" id="slide-20">
+        <div data-id="20" class="slide-overlay"></div>
+        <section class="slide-content"><h2 id="next-">Next ? ⏭️</h2>
+<ul>
+<li>Auto deploy Mock servers?</li>
+<li>Add internal API docs &amp; tryout on <a href="https://apim.oodev.io">API management Gravitee</a>!</li>
+<li>Continue to support teams adopting <a href="http://oodrive-api.oogit.oodrive.net/docs/howto/design-an-api/">design first with OpenAPI</a>...</li>
+<li>Stay tuned with <a href="https://rocket.oodrive.net/direct/louis.lin">Louis Lin</a> ;)</li>
+</ul>
+</section>
+      </div>
+    </div>
+    <div class="slide-wrapper">
+      <div class="slide hidden author-slide" id="slide-21">
+        <div data-id="21" class="slide-overlay"></div>
+        <section class="slide-content"><div class="author">
+  <h1 class="name">I&#39;m Adrien, I 🖤 API, a.k.a API lead 🤓</h1>
+    <h3 class="email">
+      <a href="mailto:a.gibrat@oodrive.com">a.gibrat@oodrive.com</a>
+    </h3>
+</div>
+</section>
+      </div>
+    </div>
+</div>
+
+
+
+
+  <script type="text/javascript">
+    /**
+ * Returns the current page number of the presentation.
+ */
+function currentPosition() {
+  return parseInt(document.querySelector('.slide:not(.hidden)').id.slice(6));
+}
+
+/**
+ * Navigates forward n pages
+ * If n is negative, we will navigate in reverse
+ */
+function navigate(n) {
+  var position = currentPosition();
+  var numSlides = document.getElementsByClassName('slide').length;
+
+  var $fragments = document.querySelectorAll('#slide-' + position + ' .fragment');
+  var fragmentsFinished = false;
+  if ($fragments.length) {
+    if (n > 0) {
+      var $f = document.querySelectorAll('#slide-' + position + ' .fragment.hidden');
+      if (!$f.length) fragmentsFinished = true;
+      else $f[0].classList.remove('hidden');
+    } else {
+      var $f = document.querySelectorAll('#slide-' + position + ' .fragment:not(.hidden)');
+      if (!$f.length) fragmentsFinished = true;
+      else $f[$f.length - 1].classList.add('hidden');
+    }
+  } else {
+    fragmentsFinished = true;
+  }
+
+  if (fragmentsFinished) {
+    /* Positions are 1-indexed, so we need to add and subtract 1 */
+    var nextPosition = (position - 1 + n) % numSlides + 1;
+
+    /* Normalize nextPosition in-case of a negative modulo result */
+    nextPosition = (nextPosition - 1 + numSlides) % numSlides + 1;
+
+    document.getElementById('slide-' + position).classList.add('hidden');
+    document.getElementById('slide-' + nextPosition).classList.remove('hidden');
+    position = nextPosition
+    updateProgress();
+    updateURL();
+    updateTabIndex();
+  }
+  document.getElementById('slide-' + position).dispatchEvent(new Event('navigate', { bubbles: true }))
+}
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  try {
+    window.history.replaceState({}, null, '#' + currentPosition());
+  } catch (e) {
+    window.location.hash = currentPosition();
+  }
+}
+
+/**
+ * Sets the progress indicator.
+ */
+function updateProgress() {
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var numSlides = document.getElementsByClassName('slide').length;
+    var position = currentPosition() - 1;
+    var percent = (numSlides === 1) ? 100 : 100 * position / (numSlides - 1);
+    progressBar.style.width = percent.toString() + '%';
+  }
+}
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var position = currentPosition();
+  var currentPageLinks = document.getElementById('slide-' + position).querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    currentPageLinks[i].removeAttribute('tabindex');
+  }
+}
+
+/**
+ * Determines whether or not we are currently in full screen mode
+ */
+function isFullScreen() {
+  return document.fullscreenElement ||
+    document.mozFullScreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement;
+}
+
+/**
+ * Toggle fullScreen mode on document element.
+ * Works on chrome (>= 15), firefox (>= 9), ie (>= 11), opera(>= 12.1), safari (>= 5).
+ */
+function toggleFullScreen() {
+  /* Convenient renames */
+  var docElem = document.documentElement;
+  var doc = document;
+
+  docElem.requestFullscreen =
+    docElem.requestFullscreen ||
+    docElem.msRequestFullscreen ||
+    docElem.mozRequestFullScreen ||
+    docElem.webkitRequestFullscreen.bind(docElem, Element.ALLOW_KEYBOARD_INPUT);
+
+  doc.exitFullscreen =
+    doc.exitFullscreen ||
+    doc.msExitFullscreen ||
+    doc.mozCancelFullScreen ||
+    doc.webkitExitFullscreen;
+
+  isFullScreen() ? doc.exitFullscreen() : docElem.requestFullscreen();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex()
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1)
+  if (page) {
+    navigate(parseInt(page) - 1);
+  }
+
+  document.onkeydown = (e) => {
+    if(e.target.tagName.toLowerCase() === 'textarea') return
+    var kc = e.keyCode
+
+    // left, down, H, J, backspace, PgUp - BACK
+    // up, right, K, L, space, PgDn - FORWARD
+    // enter - FULLSCREEN
+    if (kc === 37 || kc === 40 || kc === 8 || kc === 72 || kc === 74 || kc === 33) {
+      navigate(-1)
+    } else if (kc === 38 || kc === 39 || kc === 32 || kc === 75 || kc === 76 || kc === 34) {
+      navigate(1)
+    } else if (kc === 13) {
+      toggleFullScreen()
+    } else if (kc === 27) {
+      toggleOverview()
+    }
+  }
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = (e) => {
+      e.preventDefault()
+      navigate(1)
+    }
+
+    document.querySelector('.prev').onclick = (e) => {
+      e.preventDefault()
+      navigate(-1)
+    }
+  }
+  if (document.querySelector('.overview')) {
+    document.querySelector('.overview').onclick = toggleOverview
+  }
+
+  document.querySelectorAll('.slide-overlay').forEach($overlay => {
+    $overlay.onclick = event => {
+      navigate(parseInt(event.target.dataset.id) - currentPosition())
+      toggleOverview()
+    }
+  })
+
+  document.querySelectorAll('.fragment').forEach($fragment => {
+    $fragment.classList.add('hidden')
+  })
+
+})
+
+function toggleOverview() {
+  if (window.$style !== undefined) {
+    window.$style.remove()
+    delete window.$style
+    document.querySelector('.slides').classList.remove('active')
+  } else {
+    const $slides = document.querySelector('.slides')
+    $slides.classList.add('active')
+    const slidesList = document.querySelectorAll('.slide-wrapper')
+
+    const w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.getElementsByTagName('body')[0],
+      x = w.innerWidth || e.clientWidth || g.clientWidth,
+      y = w.innerHeight || e.clientHeight || g.clientHeight
+
+    w.$style = d.createElement('style')
+    w.$style.innerHTML = '.slide-wrapper {width: ' + (x * 0.25) + 'px; height: ' + (y * 0.25) + 'px; } body .slide {width: ' + x + 'px; height: ' + y + 'px; position: relative; transform: scale(0.25,0.25); transform-origin: 0 0; } .slide.hidden{visibility: visible;}'
+    d.getElementsByTagName('head')[0].appendChild(w.$style)
+  }
+}
+
+  </script>
+</body>
+</html>
