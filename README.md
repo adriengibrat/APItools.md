@@ -93,11 +93,11 @@ You can [start from scrath](http://oodrive-api.oogit.oodrive.net/docs/howto/crea
 
 ## Well written specification 👌
 
-<span class="fragment check" data-icon="📢">[Ask](https://rocket.oodrive.net/channel/api-rest) and [learn](https://apis.guru/browse-apis/) from the best <img width=64 src="https://rocket.oodrive.net/avatar/bogdan.ungureanu" valign="middle" alt="Bogdan"/> <img width=64 src="https://rocket.oodrive.net/avatar/paul.prihor" valign="middle" alt="Paul"/> <img width=64 src="https://rocket.oodrive.net/avatar/samantha.alwis.karunaratne" valign="middle" alt="Samantha"/> <img width=64 src="https://rocket.oodrive.net/avatar/jerome.bellier" valign="middle" alt="Jerome"/> <img width=64 src="https://rocket.oodrive.net/avatar/julien.bour" valign="middle" alt="Julien"/> <small>...</small></span><br>
+<span class="fragment check" data-icon="📢">[Ask](https://rocket.oodrive.net/channel/api-rest) and [learn](https://apis.guru/browse-apis/) from the best [<img width=64 src="https://rocket.oodrive.net/avatar/bogdan.ungureanu" valign="middle" alt="Bogdan"/>](https://rocket.oodrive.net/direct/bogdan.ungureanu) [<img width=64 src="https://rocket.oodrive.net/avatar/paul.prihor" valign="middle" alt="Paul"/>](https://rocket.oodrive.net/direct/paul.prihor) [<img width=64 src="https://rocket.oodrive.net/avatar/samantha.alwis.karunaratne" valign="middle" alt="Samantha"/>](https://rocket.oodrive.net/direct/samantha.alwis.karunaratne) [<img width=64 src="https://rocket.oodrive.net/avatar/jerome.bellier" valign="middle" alt="Jerome"/>](https://rocket.oodrive.net/direct/jerome.bellier) [<img width=64 src="https://rocket.oodrive.net/avatar/julien.bour" valign="middle" alt="Julien"/>](https://rocket.oodrive.net/direct/julien.bour) <small>...</small></span> <small class="fragment">no consumer yet!</small><br>
 
 <span class="fragment check" data-icon="📏">Lint ~~[`speccy`](https://speccy.io/)~~ [`spectral lint openapi.yml`](https://github.com/stoplightio/spectral) <small>in <img src="img/stoplight.png" valign="middle" alt="Stoplight studio"/> & <img src="img/gitlab.png" valign="middle" alt="Gitlab CI"/></small></span><br>
 
-<span class="fragment check" data-icon="☑">Enforce [common](https://github.com/openapi-community/style-guide) rules and [standard](http://standards.rest/) practice</span><br>
+<span class="fragment check" data-icon="☑">Enforce [common](https://oogit.oodrive.net/oodrive-api/oas-ruleset) rules and [standard](http://oodrive-api.oogit.oodrive.net/docs/references/guidelines.html) practice</span><br>
 
 <span class="fragment check" data-icon="👶">Detect changes [`openapi-diff`](https://github.com/quen2404/openapi-diff) <small>& make changelog</small></span><br>
 
@@ -105,15 +105,15 @@ You can [start from scrath](http://oodrive-api.oogit.oodrive.net/docs/howto/crea
 
 ### Tools already in CI 👷
 
-*Merge requests pipeline* ![merge requests pipeline](img/pipeline_mr.png)
+*Merge requests pipeline* [[![merge requests pipeline](img/pipeline_mr.png)](https://oogit.oodrive.net/oodrive-api/spec/share-api/pipelines)
 
-*Tag pipeline* ![tag pipeline](img/pipeline_tag.png)
+*Tag pipeline* [![tag pipeline](img/pipeline_tag.png)](https://oogit.oodrive.net/oodrive-api/spec/meetix-api/pipelines?scope=tags&page=1)
 
-<div class="fragment">
+<a class="fragment" href="https://oogit.oodrive.net/ci-templates/api-doc">
 ```yaml
 include: oogit.oodrive.net/ci-templates/api-doc/open-api-run.yml
 ```
-<div>
+<a>
 
 --
 
